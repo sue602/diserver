@@ -3,6 +3,8 @@
 	<name>diserver</name>
 	<comment></comment>
 	<projects>
+		<project>common</project>
+		<project>game</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>
