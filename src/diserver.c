@@ -12,8 +12,8 @@
 #include <stdlib.h>
 #include <errno.h>
 #include <ctype.h>
-#include <stdio.h>
 
+#include "module.h"
 #include "aclient.h"
 #include "anet.h"
 #include "ae.h"
@@ -155,7 +155,11 @@ int main(){
 		aDebug("create time event error:\n");
 		exit(2);
 	}
-
+	char path[128]={0};
+	getcwd(path,120);
+	printf("current path=%s \n",path);
+	init_modules();
+	open_module("game");
 	aeMain(el);
 	aeDeleteEventLoop(el);
 
