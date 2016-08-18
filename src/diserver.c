@@ -13,6 +13,7 @@
 #include <errno.h>
 #include <ctype.h>
 
+#include "common.h"
 #include "module.h"
 #include "aclient.h"
 #include "anet.h"
@@ -125,7 +126,8 @@ void acceptTcpHandler(aeEventLoop *el, int fd, void *privdata, int mask){
 //例行任务
 int cronJob(aeEventLoop *el, long long id, void *clientData){
 	//do cron jobs here
-
+	void * data = easy_malloc(20);
+	easy_free(data);
 	if(clientData) aDebug("%d event: %s\n",id, clientData);
 	return 5000;	//5000ms后继续
 	//return -1;	//no more
@@ -150,7 +152,7 @@ int main(){
 	} else {
 		aDebug("file event added:%d\n", listenfd);
 	}
-
+	common_init();
 	if(aeCreateTimeEvent(el, 1000, cronJob, cronTips, NULL) == AE_ERR) {
 		aDebug("create time event error:\n");
 		exit(2);
