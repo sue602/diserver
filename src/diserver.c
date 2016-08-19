@@ -122,15 +122,24 @@ void acceptTcpHandler(aeEventLoop *el, int fd, void *privdata, int mask){
 
 	return ;
 }
-
+#include <malloc/malloc.h>
 //例行任务
 int cronJob(aeEventLoop *el, long long id, void *clientData){
 	//do cron jobs here
-	void * data = easy_malloc(20);
+	void * data = (void*) easy_malloc(10);
+	memset(data,0,10);
+	memcpy(data,"hello",5);
+	printf("\ndata =%p , string =%s\n",data,data);
+//	printf("malloc_usable_size = %d \n",malloc_size(data-sizeof(size_t)));
+	void * newdata = (void*) easy_realloc(data,20);
+	printf("new data =%p oldptr=%p, string =%s\n",newdata,data,newdata);
+	data = newdata;
 	easy_free(data);
-	if(clientData) aDebug("%d event: %s\n",id, clientData);
+	printf("one loop finish============\n");
+	//if(clientData) aDebug("%d event: %s\n",id, clientData);
+//	common_fini();
 	return 5000;	//5000ms后继续
-	//return -1;	//no more
+//	return -1;	//no more
 }
 
 int main(){
