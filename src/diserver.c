@@ -122,7 +122,7 @@ void acceptTcpHandler(aeEventLoop *el, int fd, void *privdata, int mask){
 
 	return ;
 }
-#include <malloc/malloc.h>
+
 //例行任务
 int cronJob(aeEventLoop *el, long long id, void *clientData){
 	//do cron jobs here
@@ -171,6 +171,7 @@ int main(){
 	printf("current path=%s \n",path);
 	init_modules();
 	open_module("game");
+
 	aeMain(el);
 	aeDeleteEventLoop(el);
 
