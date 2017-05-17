@@ -80,7 +80,9 @@ void readTcpHandler(aeEventLoop *el, int fd, void *privdata, int mask){
 		freeResource(el, fd, c);
 	}
 
-	processBuf(buffer, c);
+	aDebug("into readTcpHandler readlen= %d\n",readlen);
+
+	processBuf(buffer,readlen,c);
 
 	res = aeCreateFileEvent(el, fd, AE_WRITABLE, writeTcpHandler, c);
 	if(res != -1){
@@ -112,6 +114,7 @@ void acceptTcpHandler(aeEventLoop *el, int fd, void *privdata, int mask){
 	}
 	yhc->cport = cport;
 	memcpy(yhc->cip, cip, sizeof(cip));
+	yhc->fd = fd;
 
 	res = aeCreateFileEvent(el, cfd, AE_READABLE, readTcpHandler, yhc);
 	if(res == -1){
@@ -126,18 +129,21 @@ void acceptTcpHandler(aeEventLoop *el, int fd, void *privdata, int mask){
 //例行任务
 int cronJob(aeEventLoop *el, long long id, void *clientData){
 	//do cron jobs here
-	void * data = (void*) easy_malloc(10);
-	memset(data,0,10);
+	void * data = (void*) easy_malloc(16);
+	memset(data,0,16);
 	memcpy(data,"hello",5);
 	printf("\ndata =%p , string =%s\n",data,data);
 //	printf("malloc_usable_size = %d \n",malloc_size(data-sizeof(size_t)));
-//	void * newdata = (void*) easy_realloc(data,20);
-//	printf("new data =%p oldptr=%p, string =%s\n",newdata,data,newdata);
-//	data = newdata;
+	void * newdata = (void*) easy_realloc(data,20);
+	printf("new data =%p oldptr=%p, string =%s\n",newdata,data,newdata);
+	//data = newdata;
+	memset(data,0,16);
+	memset(newdata,0,20);
+	data = newdata;
 	easy_free(data);
 	printf("one loop finish============\n");
 	//if(clientData) aDebug("%d event: %s\n",id, clientData);
-	common_fini();
+//	common_fini();
 //	return 5000;	//5000ms后继续
 	return -1;	//no more
 }

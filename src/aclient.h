@@ -75,41 +75,14 @@ void copyStr(char* dest, char* start, char* end){
 	}
 }
 
-void processBuf(char* buf, aclient* c){
+void processBuf(char* buff,int length, aclient* c){
 	int i=0;
-	char key[32], value[48];
-	char * str, *str1;
-	aDebug("string before proc: %s ", buf);
-	if( *buf == '&'){
-		char* str = buf+1;
-		while( (str1=strchr(str,'=')) != NULL ){
-			memset(key, 0, sizeof(key));
-			copyStr(key, str, str1);
-			str = str1+1;
-			if((str1=strchr(str, '&')) == NULL){
-				memset(value, 0, sizeof(value));
-				strncpy(value, str, 48);
-				setKeyVal(c, key, value);
-				break;
-			} else {
-				memset(value, 0, sizeof(value));
-				copyStr(value, str, str1);
-				setKeyVal(c, key, value);
-				str = str1+1;
-			}
-		}
-		memset(c->data, 0, sizeof(char)*CLIENT_DATA_SIZE);
-		strcpy(c->data, "1");
-	} else {
-		int* intp = (int*)buf;
-		c->cellId[2] = *intp++;
-		c->cellId[3] = *intp;
-		memset(c->data, 0, sizeof(char)*CLIENT_DATA_SIZE);
-		sprintf(c->data, "%d,%d", c->cellId[2], c->cellId[3]);
-	}
-
-	//deal with cell location
-	aDebug("\nclient info: %s, %d, %d, %d, %d\n", c->cuid, c->cellId[0], c->cellId[1], c->cellId[2], c->cellId[3]);
+	aDebug("string before proc buff=%x: %d \n",buff,length);
+	unsigned short dataLength = buff[0] << 8 | buff[1];
+	aDebug("read length =%d  \n",dataLength);
+	memcpy(c->data,buff+2,dataLength);
+	c->data[dataLength+1] = '\0';
+	aDebug("string before proc length=%d: %s \n",dataLength,c->data);
 }
 
 
